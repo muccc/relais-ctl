@@ -11,10 +11,10 @@ def hello():
 
 # bcm pin numbers from http://pinout.xyz/pinout/pin11_gpio17
 p = {
-  'decke1' : {'out': 18, 'in':  4},
-  'decke2' : {'out': 23, 'in': 17},
-  'kueche' : {'out': 24, 'in': 21},
-  'reserve': {'out': 25, 'in': 22}
+     'decke1' : {'out': 18, 'in': 22},
+     'decke2' : {'out': 23, 'in': 10},
+     'kueche' : {'out': 24, 'in': 11},
+     'reserve': {'out': 25, 'in': 9}  # Pin 9 ist vermutlich defekt... Hab deswegen als Workaround 9 und 11 vertauscht --Andi
 }
 
 
