@@ -2,12 +2,9 @@ import RPi.GPIO as GPIO
 from time import sleep
 import json
 
-from flask import Flask
-app = Flask(__name__)
+from flask_api import FlaskAPI
+app = FlaskAPI(__name__)
 
-@app.route("/")
-def hello():
-    return "Hello World!"
 
 # bcm pin numbers from http://pinout.xyz/pinout/pin11_gpio17
 p = {
@@ -38,7 +35,7 @@ def is_on(name):
 
 @app.route("/relais/", methods = ['GET'] )
 def index():
-  return json.dumps( { i: return_state(i) for i in p.keys() }, indent=2 )
+	return  { i: return_state(i) for i in p.keys() }
 
 @app.route("/relais/<string:name>", methods = ['GET'] )
 def return_state(name):
@@ -56,9 +53,38 @@ def switch_off(name):
      toggle(name)
   return return_state(name) 
 
+def note_repr(key):
+  print(key)
+  return {
+    'url': request.host_url.rstrip('/') + "relais/" + key, # url_for('switch_on', name=key),
+    'text': key
+  }
+
+@app.route("/", methods=['GET'])
+def notes_list():
+	return [ {'text': k, 'url': '/'} for k in p.keys() ]
+#  return [note_repr(i) for i in p.keys()]
+
+
+@app.route("/sitemap")
+def site_map():
+    links = []
+    out = ""
+    for rule in app.url_map.iter_rules():
+        try:
+            url = url_for(rule.endpoint, **(rule.defaults or {}))
+            links.append((url, rule.endpoint))
+            out += '<li><a href="{0}">{1}</a> {2}</li>'.format(url, rule.endpoint, rule)
+        #except BuildError:
+        except:
+            pass
+    # links is now a list of url, endpoint tuples
+    return "<h1>Relais Ctl</h1><ul>" + out + "</ul>"
+
+
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+  app.run(host='0.0.0.0', debug=True)
 
 
 
